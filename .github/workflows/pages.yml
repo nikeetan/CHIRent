@@ -1,8 +1,6 @@
-name: Deploy ChiRent to GitHub Pages
+name: Optional Actions deployment (enable workflow publishing first)
 
 on:
-  push:
-    branches: [main, Feature-Branch-V1]
   workflow_dispatch:
 
 permissions:

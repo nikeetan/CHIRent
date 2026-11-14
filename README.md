@@ -22,7 +22,17 @@ This is a public demo sign-in gate, not secure authentication. Credentials and a
 
 ## GitHub Pages
 
-The workflow at `.github/workflows/pages.yml` tests, builds, and deploys pushes to `main` and `Feature-Branch-V1`. Set **Settings → Pages → Source → GitHub Actions**. Deployments use the `github-pages` environment. Allow the publishing branch in that environment if branch restrictions are configured. Do not change a custom domain or existing protection rules without reviewing them.
+Publishing uses **Settings → Pages → Source → Deploy from a branch → `gh-pages` → `/ (root)`**. GitHub's built-in Pages publisher serves the committed static files. The application source stays on `Feature-Branch-V1`; `gh-pages` contains the static site only.
+
+After editing, commit your changes and run:
+
+```bash
+npm run deploy
+```
+
+This runs the tests and build, extracts the committed `public/` directory into its own history, and pushes it to `gh-pages` without force. The production build copies that directory unchanged. Uncommitted public assets block publishing to prevent mismatched releases. GitHub then deploys the updated branch.
+
+The optional workflow at `.github/workflows/pages.yml` supports manual Actions deployments if workflow publishing is enabled later. Automatic custom-workflow publishing was unavailable because GitHub reported an account billing lock; built-in branch publishing is used instead. No billing settings were changed.
 
 Published URL: **https://nikeetan.github.io/CHIRent/**
 
