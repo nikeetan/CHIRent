@@ -41,7 +41,7 @@ window.addEventListener('hashchange', () => {
 $('login-form').addEventListener('submit', event => {
   event.preventDefault();
   if (!validCredentials($('username').value, $('password').value)) {
-    $('login-error').textContent = 'The username or password is incorrect. Use admin / admin for this demonstration.';
+    $('login-error').textContent = 'Incorrect credentials — use admin for both username and password';
     $('login-error').hidden = false;
     $('username').setAttribute('aria-invalid', 'true'); $('password').setAttribute('aria-invalid', 'true');
     $('password').focus(); return;
@@ -54,7 +54,7 @@ $('login-form').addEventListener('submit', event => {
   $('toggle-password').textContent = 'Show'; $('toggle-password').setAttribute('aria-pressed', 'false'); $('toggle-password').setAttribute('aria-label', 'Show password');
   showWorkspace(); window.scrollTo(0, 0);
   $('page-title').focus();
-  notify(persisted ? 'Welcome, Administrator. Your policy workspace is ready.' : 'Welcome. Browser storage is unavailable; sign in again after reloading.');
+  notify(persisted ? 'Your policy workspace is ready' : 'Browser storage unavailable — sign in again after reloading');
 });
 $('toggle-password').addEventListener('click', () => {
   const show = $('password').type === 'password';
@@ -70,7 +70,7 @@ for (const id of ['username', 'password']) $(id).addEventListener('input', () =>
 $('logout').addEventListener('click', () => {
   clearSession(storage); signedIn = false;
   $('account-menu').open = false; $('login-form').reset(); $('login-error').hidden = true;
-  showLogin(); window.scrollTo(0, 0); $('username').focus(); notify('You have signed out of the demo workspace.');
+  showLogin(); window.scrollTo(0, 0); $('username').focus(); notify('Signed out of the demo workspace');
 });
 document.addEventListener('click', event => { if (!$('account-menu').contains(event.target)) $('account-menu').open = false; });
 document.addEventListener('keydown', event => { if (event.key === 'Escape') $('account-menu').open = false; });
@@ -81,14 +81,14 @@ let mapFeatures = [];
 const fmt = n => new Intl.NumberFormat('en-US').format(n);
 const policyNames = { current: 'Current conditions', ceiling: 'Rent ceiling', assistance: 'Rental assistance' };
 const sources = [
-  ['Chicago community boundaries', 'Official City of Chicago GeoJSON, bundled locally. All 77 community areas are selectable. Geography is real; housing values and map colors are synthetic.', 'https://data.cityofchicago.org/d/igwz-8jzy'],
-  ['CMAP Community Data Snapshots', 'Reference for future observed housing, income, and employment indicators across Chicago’s 77 community areas. No CMAP housing values are imported into this demo.', 'https://cmap.illinois.gov/data/community-data-snapshots/'],
-  ['HUD Small Area Fair Market Rents', 'ZIP-code and bedroom-specific housing-program benchmarks. Not rent ceilings or community-area estimates. HUD figures are not imported into this demo.', 'https://www.huduser.gov/portal/datasets/fmr/smallarea/index.html'],
-  ['Illinois Quantum and Microelectronics Park', 'Development context for the former South Works site. No causal rent effects, job counts, job eligibility, or access forecasts are estimated.', 'https://iqmp.org/about/'],
-  ['Illinois Rent Control Preemption Act', '50 ILCS 825, sections 5 and 10 prohibit local private-market rent controls. The ceiling tool is a research simulation and is not presented as a currently available city policy.', 'https://www.ilga.gov/Legislation/ILCS/Articles?ActID=748&ChapterID=11&Print=True'],
-  ['User-provided spreadsheet', 'Not imported: access could not be verified during development. All monetary figures and eligible-household counts remain explicit, editable demo assumptions.', 'https://docs.google.com/spreadsheets/d/1LDyUA7WNWr3IH-DrIeTAkGO7JQLVWJ_s8hmzxP-aEUI/edit?gid=1860674826']
+  ['Chicago community boundaries', 'Official City of Chicago geography with 77 selectable areas\nHousing values and affordability colors are synthetic', 'https://data.cityofchicago.org/d/igwz-8jzy'],
+  ['CMAP community snapshots', 'Reference for future housing and employment data integration\nNo CMAP housing values are imported in this demonstration', 'https://cmap.illinois.gov/data/community-data-snapshots/'],
+  ['HUD Small Area Fair Market Rents', 'ZIP code and bedroom specific housing program benchmarks\nReference only and not a source of rent ceilings', 'https://www.huduser.gov/portal/datasets/fmr/smallarea/index.html'],
+  ['Illinois Quantum and Microelectronics Park', 'Development context for the former South Works site\nNo causal rent effects or employment outcomes are estimated', 'https://iqmp.org/about/'],
+  ['Illinois Rent Control Preemption Act', '50 ILCS 825 prohibits local private market rent controls\nThe rent ceiling is a research scenario rather than an available city policy', 'https://www.ilga.gov/Legislation/ILCS/Articles?ActID=748&ChapterID=11&Print=True'],
+  ['Project spreadsheet', 'Not imported because access could not be verified\nAll monetary values and eligible household counts remain editable demo assumptions', 'https://docs.google.com/spreadsheets/d/1LDyUA7WNWr3IH-DrIeTAkGO7JQLVWJ_s8hmzxP-aEUI/edit?gid=1860674826']
 ];
-$('sources-view').innerHTML = `<div class="source-banner"><strong>Know what you’re looking at.</strong><br>This is a transparent scenario calculator, not a forecast or an observed affordability dashboard. Only the map boundaries and linked development/legal context are sourced. Household income, rent, eligible-household counts, and demand changes are synthetic assumptions.</div><div class="source-grid">${sources.map(([name, description, url]) => `<article class="card source-card"><h2>${name}</h2><p>${description}</p><a href="${url}" target="_blank" rel="noreferrer">Open source ↗</a></article>`).join('')}<article class="card source-card"><h2>Calculation methodology</h2><p>Market rent = base rent × (1 + assumed increase). The increase applies only in Quantum Impact view. Tenant payment is market rent for current conditions, max(0, market rent − subsidy) for assistance, and min(market rent, ceiling) for the ceiling scenario.</p><p>Housing share = tenant payment ÷ income. The demonstration affordability target is 30% of income. Annual direct assistance = min(subsidy, market rent) × whole eligible households × 12. Before/After changes the displayed payment and income chart; the comparison chart always shows all three interventions.</p></article><article class="card source-card"><h2>Scope and limitations</h2><p>No behavioral response, housing supply change, administrative costs, utility expenses, program eligibility, take-up, tax effects, or landlord rent response is modeled. The assumed eligible households are not a census count. Incomes must be positive; rent, subsidy, and household counts must be nonnegative.</p><p>The scenario explainer is deterministic, rule-based text. It does not use a language model or send data to an external AI service. Changing community resets income, rent, and household assumptions. Reset demo restores the South Shore example.</p></article></div>`;
+$('sources-view').innerHTML = `<div class="source-banner"><strong>Transparent assumptions</strong><p>Official community boundaries and linked development context support this scenario calculator</p><p>Income and rent values are synthetic assumptions rather than observed data or forecasts</p></div><div class="source-grid">${sources.map(([name, description, url]) => `<article class="card source-card"><h2>${name}</h2><p>${description}</p><a href="${url}" target="_blank" rel="noreferrer">View source ↗</a></article>`).join('')}<article class="card source-card"><h2>Calculation methodology</h2><ul><li>Market rent equals base rent multiplied by the assumed increase factor</li><li>Rental assistance reduces the tenant payment and is capped at rent</li><li>The research ceiling caps payment at the selected ceiling</li><li>Housing share equals tenant payment divided by monthly income</li><li>The demonstration affordability target is 30% of income</li><li>Annual direct assistance equals the monthly subsidy multiplied by eligible households and 12 months</li></ul></article><article class="card source-card"><h2>Scope and limitations</h2><ul><li>No housing supply or behavioral response is modeled</li><li>Administration and program eligibility are excluded</li><li>Eligible household counts are assumptions rather than census estimates</li><li>Quantum Impact applies the rent assumption while income and assistance stay constant</li><li>The scenario explainer uses rules rather than an AI service</li><li>Changing community restores its demo baseline</li></ul></article></div>`;
 
 function populateAreas() {
   const select = $('community');
@@ -112,7 +112,7 @@ function inputs() {
     const field = $(k);
     if (field.value.trim() === '' || !field.validity.valid) {
       field.setAttribute('aria-invalid', 'true');
-      throw new Error(k === 'income' ? 'Enter a monthly income greater than zero.' : `Enter a valid nonnegative ${k} within the input limits.`);
+      throw new Error(k === 'income' ? 'Enter a monthly income greater than zero' : `Enter a valid nonnegative ${k} within the input limits`);
     }
     field.removeAttribute('aria-invalid'); values[k] = Number(field.value);
   }
@@ -124,10 +124,10 @@ function setView(next) {
   $('workspace').hidden = sourceView;
   $('sources-view').hidden = !sourceView;
   $('quantum-intro').hidden = view !== 'quantum';
-  $('breadcrumb').textContent = view === 'quantum' ? 'Quantum development impact' : sourceView ? 'Data & methodology' : 'Policy simulator';
-  $('page-title').innerHTML = sourceView ? 'Evidence & <em>methodology.</em>' : view === 'quantum' ? 'Quantum growth. <em>Community resilience.</em>' : 'Housing policy. <em>Measured impact.</em>';
-  $('page-eyebrow').textContent = sourceView ? 'RESEARCH / DATA TRANSPARENCY' : view === 'quantum' ? 'SOUTH WORKS / DEVELOPMENT SCENARIOS' : 'CHICAGO / POLICY INTELLIGENCE';
-  $('page-description').textContent = sourceView ? 'Trace the sources, assumptions, and calculations behind every scenario.' : view === 'quantum' ? 'Examine housing stability alongside Chicago’s emerging quantum economy.' : 'Compare interventions and understand the tradeoffs for Chicago households.';
+  $('breadcrumb').textContent = view === 'quantum' ? 'Quantum development impact' : sourceView ? 'Data and methodology' : 'Policy simulator';
+  $('page-title').innerHTML = sourceView ? 'Data and <em>methodology</em>' : view === 'quantum' ? 'Quantum development <em>impact</em>' : 'Housing policy <em>simulator</em>';
+  $('page-eyebrow').textContent = sourceView ? 'DATA TRANSPARENCY' : view === 'quantum' ? 'SOUTH WORKS DEVELOPMENT SCENARIOS' : 'CHICAGO POLICY INTELLIGENCE';
+  $('page-description').textContent = sourceView ? 'Review the evidence and assumptions behind each scenario' : view === 'quantum' ? 'Explore hypothetical rent increases while household income and assistance stay constant' : 'Compare housing interventions and evaluate their impact on household affordability';
   document.title = `${$('breadcrumb').textContent} — ChiRent`;
   $('export').hidden = sourceView;
   document.querySelectorAll('[data-view]').forEach(b => {
@@ -157,41 +157,41 @@ function render() {
   document.querySelector('.result-panel').classList.toggle('over-target', !affordable);
   for (const p of ['assistance', 'ceiling', 'current']) $(`${p}-controls`).hidden = policy !== p;
   $('legal-note').hidden = policy !== 'ceiling';
-  $('policy-explanation').textContent = policy === 'assistance' ? 'Assistance reduces the tenant’s payment, not the landlord’s rent.' : policy === 'ceiling' ? 'Hypothetical ceiling applied to modeled rent. No supply or landlord response is modeled.' : 'Current conditions apply no intervention to the modeled market rent.';
+  $('policy-explanation').textContent = policy === 'assistance' ? 'Assistance reduces the tenant payment while landlord rent stays unchanged' : policy === 'ceiling' ? 'Research ceiling applied without modeling supply or landlord response' : 'No intervention applied to the modeled market rent';
   $('before').classList.toggle('active', !after); $('before').setAttribute('aria-pressed', String(!after));
   $('after').classList.toggle('active', after); $('after').setAttribute('aria-pressed', String(after));
   document.querySelectorAll('[data-policy]').forEach(b => {
     const active = b.dataset.policy === policy; b.classList.toggle('active', active); b.setAttribute('aria-pressed', String(active));
   });
-  $('chart-context').textContent = `${selected} · ${after ? 'After policy' : 'Before policy'}`;
+  $('chart-context').textContent = `${selected} ${after ? 'after policy' : 'before policy'}`;
   $('pie-mode').textContent = after ? 'After' : 'Before';
   const part = Math.min(100, burden);
-  $('donut').style.background = `conic-gradient(#648759 0% ${part}%, #e3ebd7 ${part}% 100%)`;
+  $('donut').style.background = `conic-gradient(var(--chart-payment) 0% ${part}%, var(--chart-remaining) ${part}% 100%)`;
   $('donut').setAttribute('aria-label', `${burden.toFixed(1)} percent of income spent on tenant housing. Payment ${usd(payment)}. Income remaining ${usd(Math.max(0, v.income - payment))}.`);
   $('donut-percent').textContent = `${burden.toFixed(1)}%`;
   $('pie-payment').textContent = usd(payment);
   $('pie-remaining').textContent = usd(Math.max(0, v.income - payment));
-  $('pie-note').textContent = burden > 100 ? `${usd(payment - v.income)} exceeds income; ring capped at 100%.` : 'Monthly household income allocation';
+  $('pie-note').textContent = burden > 100 ? `${usd(payment - v.income)} exceeds income — ring capped at 100%` : 'Monthly household income allocation';
   const max = Math.max(r.marketRent, v.income * .3, 1) * 1.12;
-  $('bar-chart').innerHTML = Object.entries(r.payments).map(([p, amount]) => `<div class="bar-row"><span>${p === 'current' ? 'No intervention' : p === 'ceiling' ? 'Rent ceiling*' : 'Assistance'}</span><div class="bar-track"><div class="bar-fill" style="width:${amount / max * 100}%;background:${p === 'assistance' ? '#7b9b64' : p === 'ceiling' ? '#c2cfa4' : '#d7b98b'}"></div><i class="bar-target-line" style="left:${v.income * .3 / max * 100}%"></i></div><strong>${usd(amount)}</strong></div>`).join('');
+  $('bar-chart').innerHTML = Object.entries(r.payments).map(([p, amount]) => `<div class="bar-row"><span>${p === 'current' ? 'No intervention' : p === 'ceiling' ? 'Rent ceiling' : 'Assistance'}</span><div class="bar-track"><div class="bar-fill" style="width:${amount / max * 100}%;background:var(${p === 'assistance' ? '--chart-payment' : p === 'ceiling' ? '--chart-ceiling' : '--chart-current'})"></div><i class="bar-target-line" style="left:${v.income * .3 / max * 100}%"></i></div><strong>${usd(amount)}</strong></div>`).join('');
   $('bar-chart').setAttribute('aria-label', `Monthly payments: no intervention ${usd(r.payments.current)}, research-only rent ceiling ${usd(r.payments.ceiling)}, assistance ${usd(r.payments.assistance)}. 30 percent income target ${usd(v.income * .3)}.`);
   $('bar-target').textContent = usd(v.income * .3);
   $('budget').textContent = policy === 'assistance' ? usd(r.annualBudget) : 'Not applicable';
-  $('budget-formula').textContent = policy === 'assistance' ? `${fmt(Math.floor(v.households))} households × ${usd(r.assistance)} × 12 months` : 'Select rental assistance to estimate direct subsidy costs.';
+  $('budget-formula').textContent = policy === 'assistance' ? `${fmt(Math.floor(v.households))} households × ${usd(r.assistance)} × 12 months` : 'Select rental assistance to estimate direct subsidy costs';
   updateInsight(v, r);
   updateMap(v);
 }
 function updateInsight(v, r) {
   let text, title;
   if (question === 'quantum') {
-    title = 'Housing stability can support shared opportunity.';
-    text = `At an assumed ${v.growth}% rent increase, the selected household’s rent would be ${usd(v.rent * (1 + v.growth / 100))} before intervention. This is a hypothetical demand scenario, not an IQMP forecast. Housing assistance may support residential stability; access to quantum-related jobs also depends on training, transit, and hiring pathways that are not modeled. Open Quantum Impact to apply this assumption.`;
+    title = 'Housing stability under changing demand';
+    text = `An assumed ${v.growth}% rent increase would bring monthly rent to ${usd(v.rent * (1 + v.growth / 100))}\nIncome and subsidy remain unchanged in this scenario\nThis is a hypothetical stress test rather than an IQMP forecast\nEmployment access and training pathways are outside this model`;
   } else if (question === 'budget') {
-    title = 'A transparent starting point for a program budget.';
-    text = policy === 'assistance' ? `For ${fmt(v.households)} assumed eligible households, ${usd(r.assistance)} of assistance per household per month implies ${usd(r.annualBudget)} in annual direct assistance. Payments are capped at modeled rent. Administration, eligibility verification, take-up, and funding limits are excluded.` : 'Choose rental assistance to calculate a direct assistance budget. A rent ceiling or the absence of an intervention does not imply a rental subsidy budget. Other policy and administrative costs are not modeled.';
+    title = 'Direct assistance funding requirements';
+    text = policy === 'assistance' ? `${fmt(v.households)} assumed households receiving ${usd(r.assistance)} monthly require ${usd(r.annualBudget)} in annual direct assistance\nPayments are capped at modeled rent\nAdministration and eligibility verification are excluded` : 'Select rental assistance to estimate direct subsidy costs\nOther policies do not allocate a rental subsidy budget in this model';
   } else {
-    title = r.affordable ? 'The modeled payment meets the affordability target.' : 'There is still an affordability gap to explore.';
-    text = `Using ${selected}’s editable demo assumptions, housing takes ${r.beforeBurden.toFixed(1)}% of monthly income before policy. ${policyNames[policy]} brings the modeled payment to ${usd(r.payment)} (${r.burden.toFixed(1)}%). ${r.affordable ? 'This meets the 30% demonstration target.' : `An additional ${usd(r.gap)} monthly reduction would reach the 30% demonstration target.`} These figures describe this assumed household, not the typical resident.`;
+    title = r.affordable ? 'Affordability target achieved' : 'Remaining affordability gap';
+    text = `The assumed ${selected} household spends ${r.beforeBurden.toFixed(1)}% of income on housing before policy\n${policyNames[policy]} brings the monthly payment to ${usd(r.payment)} and the income share to ${r.burden.toFixed(1)}%\n${r.affordable ? 'The modeled payment meets the 30% affordability target' : `An additional ${usd(r.gap)} monthly reduction would reach the 30% target`}\nThese figures represent an assumed household rather than a typical resident`;
   }
   $('insight-title').textContent = title; $('insight-text').textContent = text;
   document.querySelectorAll('[data-question]').forEach(b => b.classList.toggle('active', b.dataset.question === question));
@@ -202,7 +202,7 @@ function updateMap(v) {
     const a = isSelected ? v : { ...v, income: area.income, rent: area.rent };
     const r = simulate(a);
     const burden = (after ? r.payment : r.marketRent) / a.income * 100;
-    path.setAttribute('fill', burden <= 30 ? '#b6cea3' : burden <= 50 ? '#d5b984' : '#b87561');
+    path.setAttribute('fill', burden <= 30 ? 'var(--map-low)' : burden <= 50 ? 'var(--map-medium)' : 'var(--map-high)');
     path.classList.toggle('selected', isSelected);
     path.setAttribute('aria-pressed', String(isSelected));
     const label = `${area.name}: ${burden.toFixed(1)}% demo rent-to-income ratio. Select community.`;
@@ -244,7 +244,7 @@ async function loadMap() {
     });
     const [cx, cy] = project([-87.543, 41.751]);
     const marker = document.createElementNS(ns, 'g'); marker.setAttribute('pointer-events', 'none');
-    marker.innerHTML = `<circle cx="${cx}" cy="${cy}" r="9" fill="#163c30" stroke="#fff" stroke-width="2"/><circle cx="${cx}" cy="${cy}" r="3" fill="#c1e6b0"/><text x="${cx + 13}" y="${cy + 4}" font-family="sans-serif" font-size="9" fill="#35533b">IQMP · South Works</text>`;
+    marker.innerHTML = `<circle cx="${cx}" cy="${cy}" r="9" fill="var(--red)" stroke="#fff" stroke-width="2"/><circle cx="${cx}" cy="${cy}" r="3" fill="#fff"/><text x="${cx - 13}" y="${cy + 4}" text-anchor="end" font-family="var(--font-ui)" font-size="9" fill="var(--blue-dark)">IQMP South Works</text>`;
     svg.append(marker);
     render();
   } catch (error) {
@@ -266,7 +266,7 @@ $('reset').addEventListener('click', () => {
   policy = 'assistance'; after = true; question = 'affordability';
   $('subsidy').value = 500; $('ceiling').value = 1100; $('growth').value = 10;
   // Reset all fields even if a previous invalid input prevented rendering.
-  choose('South Shore'); navigate('simulator'); notify('South Shore demonstration restored.');
+  choose('South Shore'); navigate('simulator'); notify('South Shore demonstration restored');
 });
 $('export').addEventListener('click', () => {
   let v, r;
@@ -284,7 +284,7 @@ $('export').addEventListener('click', () => {
   const url = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8;' }));
   const a = document.createElement('a'); a.href = url; a.download = `ChiRent-${selected.replaceAll(' ', '-')}-${policy}.csv`;
   document.body.append(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(url), 1000);
-  notify('Scenario report exported with assumptions and limitations.');
+  notify('Scenario report exported with assumptions and limitations');
 });
 $('page-title').setAttribute('tabindex', '-1');
 $('export').setAttribute('aria-label', 'Export scenario as CSV');

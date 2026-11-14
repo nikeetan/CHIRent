@@ -22,7 +22,7 @@ This is a public demo sign-in gate, not secure authentication. Credentials and a
 
 ## GitHub Pages
 
-Publishing uses **Settings → Pages → Source → Deploy from a branch → `gh-pages` → `/ (root)`**. GitHub's built-in Pages publisher serves the committed static files. The application source stays on `Feature-Branch-V1`; `gh-pages` contains the static site only.
+Publishing uses **Settings → Pages → Source → Deploy from a branch → `gh-pages` → `/ (root)`**. GitHub's built-in Pages publisher serves the committed static files. The application source stays on `main`; `gh-pages` contains the static site only.
 
 After editing, commit your changes and run:
 
@@ -90,3 +90,10 @@ The bar chart always compares all three policies. Before/After changes the activ
 No behavior, housing supply response, eligibility, administrative costs, utility costs, public costs other than direct assistance, or causal IQMP effects are modeled. Incomes must be positive. Rent, subsidy, and household counts must be nonnegative. Eligible-household counts are assumptions, not census counts.
 
 Real housing-data ingestion and an API-backed AI assistant remain extensions. Secure authentication requires an external identity service and server-enforced authorization; the static demo gate does not provide either.
+
+## Visual system
+
+All pages share one stylesheet and one Inter font stack with system fallbacks
+White surfaces use Chicago flag inspired blue borders and red accents
+Headings and labels use direct wording without terminal punctuation
+Chart and map colors reference the same shared palette
